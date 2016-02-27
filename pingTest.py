@@ -1,13 +1,15 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_socketio import SocketIO
 import calendar
 import time
 import threading
 import json
 import subprocess
+import eventlet
+eventlet.monkey_patch()
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode='eventlet')
 
 exitHandler=False;
 
@@ -26,7 +28,7 @@ def test_connect():
 
 	# RETURN CURRENT GATHERED DATA
 	for line in f:
-		socketio.emit('pingData', line.strip())
+		socketio.emit('pingData', json.loads(line.strip()))
 	#emit('pingData', {'data': 'Connected'})
 
 def testPing():
@@ -39,9 +41,9 @@ def pingHandler():
 	f = open("pingData.txt","w")
 	f.write("")
 	f.close()
-	
+
 	while not exitHandler:
-		data = {'time': calendar.timegm(time.gmtime()), 'ping': testPing()}
+		data = {'time': calendar.timegm(time.gmtime()), 'ping': float(testPing())}
 
 		with open("pingData.txt","a") as of:
 			of.write(json.dumps(data) + "\n")
@@ -51,7 +53,7 @@ def pingHandler():
 
 @app.route('/')
 def main():
-	return "hey"
+	return render_template('main.html')
 
 if __name__ == '__main__':
 	t1 = threading.Thread(target=pingHandler)
@@ -64,4 +66,4 @@ if __name__ == '__main__':
 		except (KeyboardInterrupt, SystemExit):
 			exitHandler=True
 			break'''
-	socketio.run(app,host="0.0.0.0",port=80)
+	socketio.run(app,host="0.0.0.0",port=80,debug=True)
