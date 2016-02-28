@@ -78,3 +78,6 @@ if __name__ == '__main__':
 
 	print("\nLaunch web server")
 	socketio.run(app,host="0.0.0.0",port=80,debug=True)
+	exitHandler=True
+	print("pingHandler shutdown\n waiting...")
+	time.sleep(0.2)
