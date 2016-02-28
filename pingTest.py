@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 import os
 import calendar
@@ -9,10 +9,12 @@ import subprocess
 import eventlet
 eventlet.monkey_patch()
 
-app = Flask(__name__)
-socketio = SocketIO(app, async_mode='eventlet')
+print( "\n---------------\nExecuting pintTest.py with __name__ = "+__name__+"\n" )
 
-saveFile="pingData.txt"
+app = Flask(__name__)
+socketio = SocketIO(app, async_mode='eventlet') # instance of the web server
+
+saveFile="pingData.txt" # Name gets changed later
 exitHandler=False;
 
 def find_between( s, first, last ):
@@ -26,6 +28,7 @@ def find_between( s, first, last ):
 # socketio methods
 @socketio.on('connect')
 def test_connect():
+	print("User: " + str(request.sid) + " has joined!")
 	f = open(saveFile, 'r')
 
 	# RETURN CURRENT GATHERED DATA
@@ -35,7 +38,7 @@ def test_connect():
 
 def testPing():
 	hostname = "8.8.8.8"
-	return find_between(subprocess.check_output("ping -c 1 " + hostname, shell=True)
+	return find_between( subprocess.check_output("ping -c 1 " + hostname, shell=True)
 		, "time=", " ")
 
 def pingHandler():
@@ -58,11 +61,12 @@ def main():
 	return render_template('main.html')
 
 if __name__ == '__main__':
-	if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+	if os.environ.get("WERKZEUG_RUN_MAIN") == "true": # The current thread is the child process
+		print("\nChild web server thread started!")
 		saveFile="pingData-" + time.strftime("%H:%M:%S") + "-" + time.strftime("%Y%m%d") + ".pingData"
-		print(saveFile)
+		print("\nLaunch pingHandler with o/p to "+saveFile)
 		t1 = threading.Thread(target=pingHandler)
-		t1.daemon=True # quits thread on main thread exit
+		t1.daemon=True # quits this thread when parent thread exits
 		t1.start()
 
 	'''while True:
@@ -71,4 +75,6 @@ if __name__ == '__main__':
 		except (KeyboardInterrupt, SystemExit):
 			exitHandler=True
 			break'''
+
+	print("\nLaunch web server")
 	socketio.run(app,host="0.0.0.0",port=80,debug=True)
