@@ -58,6 +58,7 @@ def main():
 
 if __name__ == '__main__':
 	saveFile="pingData-" + time.strftime("%H:%M:%S") + "-" + time.strftime("%Y%m%d") + ".pingData"
+	print(saveFile)
 	t1 = threading.Thread(target=pingHandler)
 	t1.daemon=True # quits thread on main thread exit
 	t1.start()
