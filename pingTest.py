@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO
+import os
 import calendar
 import time
 import threading
@@ -57,11 +58,12 @@ def main():
 	return render_template('main.html')
 
 if __name__ == '__main__':
-	saveFile="pingData-" + time.strftime("%H:%M:%S") + "-" + time.strftime("%Y%m%d") + ".pingData"
-	print(saveFile)
-	t1 = threading.Thread(target=pingHandler)
-	t1.daemon=True # quits thread on main thread exit
-	t1.start()
+	if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+		saveFile="pingData-" + time.strftime("%H:%M:%S") + "-" + time.strftime("%Y%m%d") + ".pingData"
+		print(saveFile)
+		t1 = threading.Thread(target=pingHandler)
+		t1.daemon=True # quits thread on main thread exit
+		t1.start()
 
 	'''while True:
 		try:
