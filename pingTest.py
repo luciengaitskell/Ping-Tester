@@ -11,6 +11,7 @@ eventlet.monkey_patch()
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode='eventlet')
 
+saveFile="pingData.txt"
 exitHandler=False;
 
 def find_between( s, first, last ):
@@ -24,7 +25,7 @@ def find_between( s, first, last ):
 # socketio methods
 @socketio.on('connect')
 def test_connect():
-	f = open('pingData.txt', 'r')
+	f = open(saveFile, 'r')
 
 	# RETURN CURRENT GATHERED DATA
 	for line in f:
@@ -38,24 +39,25 @@ def testPing():
 
 def pingHandler():
 	global exitHandler
-	f = open("pingData.txt","w")
+	f = open(saveFile,"w")
 	f.write("")
 	f.close()
 
 	while not exitHandler:
 		data = {'time': calendar.timegm(time.gmtime()), 'ping': float(testPing())}
 
-		with open("pingData.txt","a") as of:
+		with open(saveFile,"a") as of:
 			of.write(json.dumps(data) + "\n")
 
 		socketio.emit('pingData', data)
-		time.sleep(10)
+		time.sleep(20)
 
 @app.route('/')
 def main():
 	return render_template('main.html')
 
 if __name__ == '__main__':
+	saveFile="pingData-" + time.strftime("%H:%M:%S") + "-" + time.strftime("%Y%m%d") + ".pingData"
 	t1 = threading.Thread(target=pingHandler)
 	t1.daemon=True # quits thread on main thread exit
 	t1.start()
