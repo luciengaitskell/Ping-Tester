@@ -49,7 +49,7 @@ def pingHandler():
 			of.write(json.dumps(data) + "\n")
 
 		socketio.emit('pingData', data)
-		time.sleep(1)
+		time.sleep(10)
 
 @app.route('/')
 def main():
