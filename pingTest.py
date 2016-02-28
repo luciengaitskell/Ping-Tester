@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 import os
 import calendar
 import time
@@ -30,7 +30,7 @@ def test_connect():
 
 	# RETURN CURRENT GATHERED DATA
 	for line in f:
-		socketio.emit('pingData', json.loads(line.strip()))
+		emit('pingData', json.loads(line.strip()))
 	#emit('pingData', {'data': 'Connected'})
 
 def testPing():
