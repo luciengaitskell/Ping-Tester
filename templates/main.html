@@ -26,6 +26,7 @@
   		});
 
   		var dataLength = 4320; // number of dataPoints visible at any point
+      //86400 = 60*60*24 -- 86400 / 20 <-- Sampling delay
 
       var socket = io.connect('http://' + document.domain + ':' + location.port);
       socket.on('pingData', function(data) {
