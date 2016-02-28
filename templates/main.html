@@ -11,6 +11,10 @@
   			title :{
   				text: "Ping to 8.8.8.8 (epoch time)"
   			},
+        axisX:{
+          valueFormatString: "HH:mm" ,
+          labelAngle: -50
+        },
         axisY:{
           minimum: 0,
           maximum: 300
@@ -27,7 +31,7 @@
       socket.on('pingData', function(data) {
         console.log(data);
         dps.push({
-          x: data.time,
+          x: new Date(data.time*1000),
           y: data.ping
         });
         if (dps.length > dataLength)
