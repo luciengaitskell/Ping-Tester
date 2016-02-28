@@ -1,0 +1,6 @@
+# requirments.txt
+# Use "pip install -r requirments.txt"
+eventlet
+flask-socketio
+python-socketio
+flask
