@@ -9,7 +9,7 @@
 
   		var chart = new CanvasJS.Chart("chartContainer",{
   			title :{
-  				text: "Live Random Data"
+  				text: "Ping to 8.8.8.8 (epoch time)"
   			},
   			data: [{
   				type: "line",
@@ -17,7 +17,7 @@
   			}]
   		});
 
-  		var dataLength = 500; // number of dataPoints visible at any point
+  		var dataLength = 86400; // number of dataPoints visible at any point
 
       var socket = io.connect('http://' + document.domain + ':' + location.port);
       socket.on('pingData', function(data) {
@@ -39,7 +39,10 @@
   </head>
 
   <body>
-    <div id="chartContainer" style="height: 300px; width:100%;">
+    <div id="chartContainer" style="height: 95%; width:100%;">
+    </div>
+    <div>
+      (It may take a second to load)
     </div>
   </body>
 </html>
