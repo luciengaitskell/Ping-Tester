@@ -41,7 +41,7 @@ def testPing():
 	hostname = "8.8.8.8"
 
 	try:
-		if "darwin" in platform.platform().lower():
+		if "darwin" in platform.platform().lower(): # If it is mac
 			return find_between( subprocess.check_output("ping -t 1 " + hostname, shell=True)
 				, "time=", " ")
 		else:
