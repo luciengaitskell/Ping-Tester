@@ -109,7 +109,7 @@ def main():
 if __name__ == '__main__':
 	if os.environ.get("WERKZEUG_RUN_MAIN") == "true": # The current thread is the child process
 		print("\nChild web server thread started!")
-		saveFile="pingData-" + time.strftime("%H:%M:%S") + "-" + time.strftime("%Y%m%d") + ".pingData"
+		saveFile="pingData/" + "pingData-" + time.strftime("%H:%M:%S") + "-" + time.strftime("%Y%m%d") + ".pingData"
 		print("\nLaunch pingHandler with o/p to "+saveFile)
 		t1 = threading.Thread(target=pingHandler)
 		t1.daemon=True # quits this thread when parent thread exits
