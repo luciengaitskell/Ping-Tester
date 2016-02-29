@@ -5,7 +5,8 @@
     <script type="text/javascript">
   	  window.onload = function () {
 
-  		var dps = []; // dataPoints
+  		var dpsmean = []; // dataPoints
+      var dpsextreme = []; // dataPoints
 
   		var chart = new CanvasJS.Chart("chartContainer",{
   			title :{
@@ -16,13 +17,22 @@
           labelAngle: -50
         },
         axisY:{
-          minimum: 0,
+          minimum: -1,
           maximum: 300
         },
-  			data: [{
+  			data: [
+          {
   				type: "line",
-  				dataPoints: dps
-  			}]
+          showInLegend: true,
+          legendText: "Mean Ping",
+  				dataPoints: dpsmean
+  			},
+        {
+          type: "line",
+          showInLegend: true,
+          legendText: "Extreme Ping (-1 Means Connection Drop)",
+          dataPoints: dpsextreme
+        }]
   		});
 
   		var dataLength = 4320; // number of dataPoints visible at any point
@@ -31,14 +41,18 @@
       var socket = io.connect('http://' + document.domain + ':' + location.port);
       socket.on('pingData', function(data) {
         console.log(data);
-        dps.push({
+        dpsmean.push({
           x: new Date(data.time*1000),
-          y: data.ping
+          y: data.mean
         });
-        if (dps.length > dataLength)
+        dpsextreme.push({
+          x: new Date(data.time*1000),
+          y: data.extreme
+        });
+        /*if (dpsmean.length > dataLength)
   			{
-  				dps.shift();
-  			}
+  				dpsmean.shift();
+  			}*/
         chart.render();
       });
   	}

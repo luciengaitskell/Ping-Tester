@@ -38,23 +38,53 @@ def test_connect():
 
 def testPing():
 	hostname = "8.8.8.8"
-	return find_between( subprocess.check_output("ping -c 1 " + hostname, shell=True)
-		, "time=", " ")
+
+	try:
+		return find_between( subprocess.check_output("ping -t 1 " + hostname, shell=True)
+			, "time=", " ")
+	except subprocess.CalledProcessError as grepexc:
+		return -1
 
 def pingHandler():
 	global exitHandler
+	requestWait=1
+	samplePeriod=60
+
 	f = open(saveFile,"w")
 	f.write("")
 	f.close()
 
 	while not exitHandler:
-		data = {'time': calendar.timegm(time.gmtime()), 'ping': float(testPing())}
+		readings=[]
+		startTime=time.time()
+		while time.time()-startTime<samplePeriod:
+			readings.append(float(testPing()))
+			time.sleep(requestWait)
+
+		pingAverage=0
+		failed=False
+		numGoodPings=0
+		for ii in readings:
+			if ii == -1:
+				failed=True
+			else:
+				numGoodPings += 1
+				pingAverage += ii
+
+		pingAverage = pingAverage/numGoodPings
+
+		if failed:
+			extremeValue=-1
+		else:
+			extremeValue=pingAverage
+
+		returnData={"time": calendar.timegm(time.gmtime()),
+			"mean": pingAverage, "extreme": extremeValue}
 
 		with open(saveFile,"a") as of:
-			of.write(json.dumps(data) + "\n")
+			of.write(json.dumps(returnData) + "\n")
 
-		socketio.emit('pingData', data)
-		time.sleep(20)
+		socketio.emit('pingData', returnData)
 
 @app.route('/')
 def main():
