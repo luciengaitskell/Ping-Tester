@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
+import platform
 import os
 import calendar
 import time
@@ -40,8 +41,13 @@ def testPing():
 	hostname = "8.8.8.8"
 
 	try:
-		return find_between( subprocess.check_output("ping -t 1 " + hostname, shell=True)
-			, "time=", " ")
+		if "darwin" in platform.platform().lower():
+			return find_between( subprocess.check_output("ping -t 1 " + hostname, shell=True)
+				, "time=", " ")
+		else:
+			return find_between( subprocess.check_output("ping -W 1 -c 1 " + hostname, shell=True)
+				, "time=", " ")
+
 	except subprocess.CalledProcessError as grepexc:
 		return -1
 
