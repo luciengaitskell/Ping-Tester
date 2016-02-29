@@ -56,6 +56,16 @@
   			}*/
         chart.render();
       });
+
+      socket.on('initialData', function(data) {
+        var div = document.getElementById('initialData');
+        console.log(data);
+
+        div.innerHTML = div.innerHTML
+          + " - Request Wait: " + data.requestWait.toString()
+          + " | Sample Period: " + data.samplePeriod.toString();
+        //div.innerHTML = div.innerHTML + data;
+      });
   	}
 	</script>
 	<script type="text/javascript" src="/static/scripts/canvasjs.min.js"></script>
@@ -68,7 +78,7 @@
   </body>
 
   <footer>
-    <div>
+    <div id="initialData">
       (It may take a second to load and wait for first point to be plotted) - ("-1" Means Connection Drop)
     </div>
   </footer>

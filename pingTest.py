@@ -17,6 +17,8 @@ socketio = SocketIO(app, async_mode='eventlet') # instance of the web server
 
 saveFile="pingData.txt" # Name gets changed later
 exitHandler=False;
+requestWait=1
+samplePeriod=60
 
 def find_between( s, first, last ):
 	try:
@@ -31,7 +33,8 @@ def find_between( s, first, last ):
 def test_connect():
 	print("User: " + str(request.sid) + " has joined!")
 	f = open(saveFile, 'r')
-
+	
+	emit('initialData', {"requestWait": requestWait, "samplePeriod": samplePeriod})
 	# RETURN CURRENT GATHERED DATA
 	for line in f:
 		emit('pingData', json.loads(line.strip()))
@@ -53,8 +56,6 @@ def testPing():
 
 def pingHandler():
 	global exitHandler
-	requestWait=1
-	samplePeriod=60
 
 	f = open(saveFile,"w")
 	f.write("")
