@@ -57,8 +57,15 @@ def pingHandler():
 	while not exitHandler:
 		readings=[]
 		startTime=time.time()
+		maxPing=0.0
+
 		while time.time()-startTime<samplePeriod:
-			readings.append(float(testPing()))
+			ping = float(testPing())
+			readings.append(ping)
+
+			if ping>maxPing:
+				maxPing=ping
+
 			time.sleep(requestWait)
 
 		pingAverage=0
@@ -79,7 +86,7 @@ def pingHandler():
 		if failed:
 			extremeValue=-1
 		else:
-			extremeValue=pingAverage
+			extremeValue=maxPing
 
 		returnData={"time": calendar.timegm(time.gmtime()),
 			"mean": pingAverage, "extreme": extremeValue}
