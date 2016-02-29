@@ -71,7 +71,10 @@ def pingHandler():
 				numGoodPings += 1
 				pingAverage += ii
 
-		pingAverage = pingAverage/numGoodPings
+		if numGoodPings>0:
+			pingAverage = pingAverage/numGoodPings
+		else:
+			pingAverage=-1
 
 		if failed:
 			extremeValue=-1
