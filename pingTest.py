@@ -38,7 +38,7 @@ def find_between( s, first, last ):
 @socketio.on('connect')
 def test_connect():
 	print("User: " + str(request.sid) + " has joined!")
-	emit('initialData', {"requestWait": requestWait, "samplePeriod": samplePeriod})
+	emit('initialData', {"requestWait": requestWait, "samplePeriod": samplePeriod,"saveFile": saveFile})
 
 	returnJson=[]
 	f = open(saveFile, 'r')
