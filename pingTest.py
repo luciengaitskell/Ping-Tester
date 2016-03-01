@@ -20,7 +20,7 @@ exitHandler=False;
 requestWait=1
 print("requestWait = " + str(requestWait))
 
-if true:
+if True:
 	samplePeriod=60
 else:
 	samplePeriod=5
