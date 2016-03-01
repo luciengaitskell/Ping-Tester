@@ -18,7 +18,13 @@ socketio = SocketIO(app, async_mode='eventlet') # instance of the web server
 saveFile="pingData.txt" # Name gets changed later
 exitHandler=False;
 requestWait=1
-samplePeriod=60
+print("requestWait = " + requestWait)
+
+if true:
+	samplePeriod=60
+else:
+	samplePeriod=5
+print("samplePeriod = " + samplePeriod)
 
 def find_between( s, first, last ):
 	try:
