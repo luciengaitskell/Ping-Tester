@@ -66,8 +66,9 @@
         console.log(data);
 
         div.innerHTML = div.innerHTML
-          + " - Request Wait: " + data.requestWait.toString()
-          + " | Sample Period: " + data.samplePeriod.toString();
+          + "Request Wait: " + data.requestWait.toString()
+          + " | Sample Period: " + data.samplePeriod.toString()
+          + " | Saving to: " + data.saveFile;
         //div.innerHTML = div.innerHTML + data;
       });
 
@@ -90,7 +91,7 @@
 
   <footer>
     <div id="initialData">
-      (It may take a second to load and wait for first point to be plotted) - ("-1" Means Connection Drop)
+      (It may take a second to load and wait for first point to be plotted) - ("-1" Means Connection Drop) <br>
     </div>
   </footer>
 </html>
