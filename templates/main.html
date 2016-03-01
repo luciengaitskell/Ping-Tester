@@ -39,8 +39,7 @@
   		var dataLength = 4320; // number of dataPoints visible at any point
       //86400 = 60*60*24 -- 86400 / 20 <-- Sampling delay
 
-      var socket = io.connect('http://' + document.domain + ':' + location.port);
-      socket.on('pingData', function(data) {
+      function pushDpsData(data) {
         console.log(data);
         dpsmean.push({
           x: new Date(data.time*1000),
@@ -50,6 +49,11 @@
           x: new Date(data.time*1000),
           y: data.extreme
         });
+      }
+
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+      socket.on('pingData', function(data) {
+        pushDpsData(data);
         /*if (dpsmean.length > dataLength)
   			{
   				dpsmean.shift();
@@ -65,6 +69,13 @@
           + " - Request Wait: " + data.requestWait.toString()
           + " | Sample Period: " + data.samplePeriod.toString();
         //div.innerHTML = div.innerHTML + data;
+      });
+
+      socket.on('initialPingData', function(data) {
+        for (var initialData in data) {
+          pushDpsData(data[initialData]);
+        }
+        chart.render();
       });
   	}
 	</script>

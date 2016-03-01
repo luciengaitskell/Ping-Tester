@@ -38,12 +38,18 @@ def find_between( s, first, last ):
 @socketio.on('connect')
 def test_connect():
 	print("User: " + str(request.sid) + " has joined!")
-	f = open(saveFile, 'r')
-	
 	emit('initialData', {"requestWait": requestWait, "samplePeriod": samplePeriod})
+
+	returnJson=[]
+	f = open(saveFile, 'r')
+
 	# RETURN CURRENT GATHERED DATA
 	for line in f:
-		emit('pingData', json.loads(line.strip()))
+		returnJson.append(json.loads(line.strip()))
+
+	# Comment the print satement out when not debugging as it will slow down the script
+	#print("Giving new user: " + str(returnJson))
+	emit('initialPingData', returnJson)
 	#emit('pingData', {'data': 'Connected'})
 
 def testPing():
