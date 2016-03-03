@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/static/scripts/canvasjs.min.js"></script>
+    <script type="text/javascript" src="/static/scripts/dataGraph.js"></script>
+
+    <script type="text/javascript">
+  	  window.onload = function () {
+        var graph = new DataGraph("chartContainer");
+
+        var data = {{ data|tojson|safe }}
+        for (var ii in data) {
+          console.log(data[ii])
+          graph.pushDpsData(data[ii])
+        }
+        graph.render()
+  	   }
+    </script>
+  </head>
+
+  <body>
+    <div id="chartContainer" style="height: 95%; width:100%;">
+    </div>
+  </body>
+
+  <footer>
+    <div id="initialData">
+      (It may take a second to load and wait for first point to be plotted) - ("-1" Means Connection Drop) <br>
+    </div>
+  </footer>
+</html>

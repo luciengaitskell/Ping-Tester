@@ -1,87 +1,43 @@
 <html>
   <head>
+    <script type="text/javascript" src="/static/scripts/canvasjs.min.js"></script>
     <script type="text/javascript" src="/static/scripts/socket.io.min.js"></script>
+    <script type="text/javascript" src="/static/scripts/dataGraph.js"></script>
 
     <script type="text/javascript">
+      var graph;
   	  window.onload = function () {
+        graph = new DataGraph("chartContainer");
 
-  		var dpsmean = []; // dataPoints
-      var dpsextreme = []; // dataPoints
-
-  		var chart = new CanvasJS.Chart("chartContainer",{
-  			title :{
-  				text: "Ping to 8.8.8.8"
-  			},
-        axisX:{
-          valueFormatString: "HH:mm" ,
-          labelAngle: -50
-        },
-        axisY:{
-          minimum: -1,
-          maximum: 300
-        },
-  			data: [
-          {
-  				type: "line",
-          showInLegend: true,
-          markerType: "square",
-          legendText: "Mean Ping",
-  				dataPoints: dpsmean
-  			},
-        {
-          type: "line",
-          showInLegend: true,
-          legendText: "Extreme Ping",
-          dataPoints: dpsextreme
-        }]
-  		});
-
-  		var dataLength = 4320; // number of dataPoints visible at any point
-      //86400 = 60*60*24 -- 86400 / 20 <-- Sampling delay
-
-      function pushDpsData(data) {
-        console.log(data);
-        dpsmean.push({
-          x: new Date(data.time*1000),
-          y: data.mean
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('pingData', function(data) {
+          graph.pushDpsData(data);
+          /*if (dpsmean.length > dataLength)
+    			{
+    				dpsmean.shift();
+    			}*/
+          graph.render();
         });
-        dpsextreme.push({
-          x: new Date(data.time*1000),
-          y: data.extreme
+
+        socket.on('initialData', function(data) {
+          var div = document.getElementById('initialData');
+          console.log(data);
+
+          div.innerHTML = div.innerHTML
+            + "Request Wait: " + data.requestWait.toString()
+            + " | Sample Period: " + data.samplePeriod.toString()
+            + " | Saving to: " + data.saveFile;
+          //div.innerHTML = div.innerHTML + data;
         });
-      }
 
-      var socket = io.connect('http://' + document.domain + ':' + location.port);
-      socket.on('pingData', function(data) {
-        pushDpsData(data);
-        /*if (dpsmean.length > dataLength)
-  			{
-  				dpsmean.shift();
-  			}*/
-        chart.render();
-      });
-
-      socket.on('initialData', function(data) {
-        var div = document.getElementById('initialData');
-        console.log(data);
-
-        div.innerHTML = div.innerHTML
-          + "Request Wait: " + data.requestWait.toString()
-          + " | Sample Period: " + data.samplePeriod.toString()
-          + " | Saving to: " + data.saveFile;
-        //div.innerHTML = div.innerHTML + data;
-      });
-
-      socket.on('initialPingData', function(data) {
-        for (var initialData in data) {
-          pushDpsData(data[initialData]);
-        }
-        chart.render();
-      });
-  	}
-	</script>
-	<script type="text/javascript" src="/static/scripts/canvasjs.min.js"></script>
-
+        socket.on('initialPingData', function(data) {
+          for (var initialData in data) {
+            graph.pushDpsData(data[initialData]);
+          }
+          graph.render();
+        });
+  	   }
+    </script>
   </head>
 
   <body>
